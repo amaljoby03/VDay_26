@@ -2251,7 +2251,7 @@
         </div>
 
         <!-- Audio Element -->
-        <audio id="bgMusic" loop preload="auto" autoplay>
+        <audio id="bgMusic" loop preload="auto" autoplay muted playsinline>
             <source src="" type="audio/mpeg" />
         </audio>
 
@@ -3775,6 +3775,7 @@
                 const startOnFirstGesture = async () => {
                     const started = await tryAutoStartMusic();
                     if (started) {
+                        audio.muted = false;
                         window.removeEventListener("pointerdown", startOnFirstGesture);
                         window.removeEventListener("touchstart", startOnFirstGesture);
                         window.removeEventListener("keydown", startOnFirstGesture);
@@ -3789,6 +3790,7 @@
             window.addEventListener("load", async () => {
                 initializeMedia();
                 audio.volume = 0.7;
+                audio.muted = true;
                 const started = await tryAutoStartMusic();
                 if (!started) {
                     bindFirstInteractionAutoplay();
@@ -3866,6 +3868,7 @@
                     volumeSlider.value = 0;
                 } else {
                     audio.volume = 0.7;
+                    audio.muted = false;
                     volumeSlider.value = 70;
                 }
                 updateVolumeIcon();
@@ -4397,6 +4400,11 @@
         </button>
     </body>
 </html>
+
+
+
+
+
 
 
 
