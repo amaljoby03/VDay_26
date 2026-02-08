@@ -3254,9 +3254,11 @@
             }
 
             // Background slideshow
-            let currentSlideIndex = 0;
             let shuffledSlides = [];
             let shuffledSlidePointer = 0;
+            let currentSlidePath = "";
+            let slideAdvanceTimerId = null;
+            let slideFadeTimerId = null;
 
             function shuffleSlides(slides) {
                 const arr = [...slides];
@@ -3278,14 +3280,30 @@
             }
 
             function getNextSlide(slides) {
+                if (!slides || slides.length === 0) return "";
+                if (slides.length === 1) return slides[0];
+
                 if (
                     shuffledSlides.length === 0 ||
                     shuffledSlidePointer >= shuffledSlides.length
                 ) {
                     refillSlideQueue(slides);
                 }
-                const nextSlide = shuffledSlides[shuffledSlidePointer];
+
+                let nextSlide = shuffledSlides[shuffledSlidePointer];
                 shuffledSlidePointer += 1;
+
+                // Never show the same slide twice in a row.
+                if (nextSlide === currentSlidePath) {
+                    if (
+                        shuffledSlidePointer >= shuffledSlides.length
+                    ) {
+                        refillSlideQueue(slides);
+                    }
+                    nextSlide = shuffledSlides[shuffledSlidePointer];
+                    shuffledSlidePointer += 1;
+                }
+
                 return nextSlide;
             }
 
@@ -3324,22 +3342,43 @@
                     return;
                 }
 
+                // Prevent stacked timers if this is ever re-initialized.
+                if (slideAdvanceTimerId) {
+                    clearTimeout(slideAdvanceTimerId);
+                    slideAdvanceTimerId = null;
+                }
+                if (slideFadeTimerId) {
+                    clearTimeout(slideFadeTimerId);
+                    slideFadeTimerId = null;
+                }
+
+                refillSlideQueue(slides);
                 const firstSlide = getNextSlide(slides);
+                currentSlidePath = firstSlide;
                 slideImg.src = firstSlide;
                 applySlideFraming(slideImg, firstSlide);
 
                 if (slides.length === 1) return;
 
                 const duration = CONFIG.slideDurationMs || 3000;
-                setInterval(() => {
-                    slideImg.classList.add("fade-out");
-                    setTimeout(() => {
-                        const nextSlide = getNextSlide(slides);
-                        slideImg.src = nextSlide;
-                        applySlideFraming(slideImg, nextSlide);
-                        slideImg.classList.remove("fade-out");
-                    }, 1200);
-                }, duration);
+                const fadeDurationMs = 1200;
+
+                function scheduleNextTransition() {
+                    slideAdvanceTimerId = setTimeout(() => {
+                        slideImg.classList.add("fade-out");
+
+                        slideFadeTimerId = setTimeout(() => {
+                            const nextSlide = getNextSlide(slides);
+                            currentSlidePath = nextSlide;
+                            slideImg.src = nextSlide;
+                            applySlideFraming(slideImg, nextSlide);
+                            slideImg.classList.remove("fade-out");
+                            scheduleNextTransition();
+                        }, fadeDurationMs);
+                    }, duration);
+                }
+
+                scheduleNextTransition();
             }
             // Initialize media
             function initializeMedia() {
@@ -4106,6 +4145,7 @@
         </button>
     </body>
 </html>
+
 
 
 
