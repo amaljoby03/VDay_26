@@ -3773,13 +3773,14 @@
                 autoplayBound = true;
 
                 const startOnFirstGesture = async () => {
+                    audio.muted = false;
                     const started = await tryAutoStartMusic();
                     if (started) {
-                        audio.muted = false;
-                        window.removeEventListener("pointerdown", startOnFirstGesture);
-                        window.removeEventListener("touchstart", startOnFirstGesture);
-                        window.removeEventListener("keydown", startOnFirstGesture);
+                        setMusicUiState(true);
                     }
+                    window.removeEventListener("pointerdown", startOnFirstGesture);
+                    window.removeEventListener("touchstart", startOnFirstGesture);
+                    window.removeEventListener("keydown", startOnFirstGesture);
                 };
 
                 window.addEventListener("pointerdown", startOnFirstGesture, { passive: true });
@@ -3791,10 +3792,8 @@
                 initializeMedia();
                 audio.volume = 0.7;
                 audio.muted = true;
-                const started = await tryAutoStartMusic();
-                if (!started) {
-                    bindFirstInteractionAutoplay();
-                }
+                bindFirstInteractionAutoplay();
+                await tryAutoStartMusic();
             });
 
             // Auto-advance to next song when current song ends
@@ -3814,6 +3813,8 @@
 
             // Start journey + ensure music starts if it was blocked before
             function startJourneyWithMusic() {
+                audio.muted = false;
+                audio.play().catch(() => {});
                 tryAutoStartMusic();
                 startJourney();
             }
@@ -3822,6 +3823,7 @@
             playPauseBtn.addEventListener("click", async () => {
                 if (audio.paused) {
                     try {
+                        audio.muted = false;
                         await audio.play();
                         musicStarted = true;
                         setMusicUiState(true);
@@ -4400,6 +4402,8 @@
         </button>
     </body>
 </html>
+
+
 
 
 
