@@ -1,0 +1,2007 @@
+﻿<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>A Special Question</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root {
+                --primary: #3a7bd5;
+                --secondary: #25507a;
+                --accent: #9fc5ff;
+                --dark: #0f1a2b;
+                --light: #f3f7ff;
+                --rose: #6bb2ff;
+            }
+
+            body {
+                font-family: "Lora", serif;
+                background: var(--light);
+                color: #ffffff;
+                overflow-x: hidden;
+                text-rendering: optimizeLegibility;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            /* Background Video Styles */
+            .video-background {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+                overflow: hidden;
+                transition: opacity 1s ease;
+            }
+
+            .video-background.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .video-background video {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                min-width: 100%;
+                min-height: 100%;
+                width: auto;
+                height: auto;
+                transform: translate(-50%, -50%);
+                object-fit: cover;
+            }
+
+            /* Background Slideshow Styles */
+            .slideshow-background {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: -1;
+                overflow: hidden;
+                transition: opacity 1s ease;
+            }
+
+            .slideshow-background.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .slideshow-background img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: opacity 2.4s ease;
+                opacity: 1;
+                transform: scale(1);
+                animation: kenburns 12s ease-in-out infinite;
+            }
+
+            .slideshow-background img.fade-out {
+                opacity: 0;
+            }
+
+            @keyframes kenburns {
+                0% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.06);
+                }
+                100% {
+                    transform: scale(1);
+                }
+            }
+
+            .video-overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(15, 26, 43, 0.1);
+                backdrop-filter: blur(0.5px);
+            }
+
+            .section {
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 2rem;
+                position: relative;
+                opacity: 0;
+                transition: opacity 1.5s ease;
+                background: transparent;
+            }
+
+            .section.visible {
+                opacity: 1;
+            }
+
+            /* Animated background particles */
+            .particles {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: 0;
+            }
+
+            .particle {
+                position: absolute;
+                width: 4px;
+                height: 4px;
+                background: var(--primary);
+                border-radius: 50%;
+                opacity: 0;
+                animation: float 8s infinite ease-in-out;
+            }
+
+            @keyframes float {
+                0%,
+                100% {
+                    transform: translateY(0) translateX(0);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 0.6;
+                }
+                50% {
+                    transform: translateY(-100vh) translateX(50px);
+                    opacity: 0.3;
+                }
+                90% {
+                    opacity: 0.6;
+                }
+            }
+
+            /* Landing Section */
+            #landing {
+                background: transparent;
+                flex-direction: column;
+            }
+
+            .main-title {
+                font-family: "Cormorant Garamond", serif;
+                font-size: clamp(3rem, 10vw, 7rem);
+                font-weight: 300;
+                letter-spacing: 0.1em;
+                text-align: center;
+                margin-bottom: 2rem;
+                background: none;
+                color: #ffffff;
+                -webkit-text-fill-color: #ffffff;
+                animation: fadeInDown 2s ease;
+                text-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+            }
+
+            .subtitle {
+                font-size: clamp(1.2rem, 3vw, 1.8rem);
+                font-weight: 300;
+                font-style: italic;
+                text-align: center;
+                color: #ffffff;
+                margin-bottom: 4rem;
+                animation: fadeInUp 2s ease 0.5s both;
+                text-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+            }
+
+            .start-btn {
+                padding: 1.5rem 4rem;
+                font-family: "Cormorant Garamond", serif;
+                font-size: 1.5rem;
+                font-weight: 600;
+                letter-spacing: 0.15em;
+                background: var(--primary);
+                color: var(--light);
+                border: none;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+                transition: all 0.4s ease;
+                animation: fadeInUp 2s ease 1s both;
+            }
+
+            .start-btn::before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                background: var(--secondary);
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+                transition:
+                    width 0.6s,
+                    height 0.6s;
+            }
+
+            .start-btn:hover::before {
+                width: 300px;
+                height: 300px;
+            }
+
+            .start-btn span {
+                position: relative;
+                z-index: 1;
+            }
+
+            .start-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 30px rgba(212, 163, 115, 0.4);
+            }
+
+            /* Memory Sections */
+            .memory-section {
+                background: transparent;
+                position: relative;
+            }
+
+            .memory-section::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(
+                    circle at 30% 50%,
+                    rgba(212, 163, 115, 0.05) 0%,
+                    transparent 50%
+                );
+                pointer-events: none;
+            }
+
+            .memory-content {
+                max-width: 800px;
+                text-align: center;
+                position: relative;
+                z-index: 1;
+            }
+
+            .memory-number {
+                font-family: "Cormorant Garamond", serif;
+                font-size: 1.2rem;
+                letter-spacing: 0.3em;
+                color: var(--primary);
+                margin-bottom: 1rem;
+                opacity: 0;
+                transform: translateY(20px);
+                transition: all 1s ease;
+            }
+
+            .visible .memory-number {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .memory-title {
+                font-family: "Cormorant Garamond", serif;
+                font-size: clamp(2.5rem, 6vw, 4rem);
+                font-weight: 400;
+                margin-bottom: 2rem;
+                color: #ffffff;
+                opacity: 0;
+                transform: translateY(30px);
+                transition: all 1s ease 0.3s;
+                text-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+            }
+
+            .visible .memory-title {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .memory-text {
+                font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+                line-height: 2;
+                color: #ffffff;
+                margin-bottom: 3rem;
+                opacity: 0;
+                transform: translateY(30px);
+                transition: all 1s ease 0.6s;
+                text-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+            }
+
+            .visible .memory-text {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .continue-btn {
+                padding: 1rem 3rem;
+                font-family: "Lora", serif;
+                font-size: 1.1rem;
+                background: transparent;
+                color: var(--primary);
+                border: 2px solid var(--primary);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                opacity: 0;
+                transform: translateY(20px);
+                transition: all 1s ease 0.9s;
+            }
+
+            .visible .continue-btn {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            .continue-btn:hover {
+                background: var(--primary);
+                color: var(--light);
+                transform: translateY(-2px);
+            }
+
+            /* Proposal Section */
+            #proposal {
+                background: linear-gradient(
+                    135deg,
+                    var(--dark) 0%,
+                    #3d3426 100%
+                );
+                flex-direction: column;
+                position: relative;
+                overflow: hidden;
+                min-height: 120vh;
+                padding: 4rem 2rem;
+            }
+
+            #proposal::before {
+                content: "";
+                position: absolute;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(
+                    circle,
+                    rgba(212, 163, 115, 0.1) 0%,
+                    transparent 70%
+                );
+                animation: rotate 20s linear infinite;
+            }
+
+            @keyframes rotate {
+                from {
+                    transform: rotate(0deg);
+                }
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .proposal-content {
+                max-width: 900px;
+                text-align: center;
+                position: relative;
+                z-index: 1;
+            }
+
+            .proposal-title {
+                font-family: "Cormorant Garamond", serif;
+                font-size: clamp(2.5rem, 7vw, 5rem);
+                font-weight: 300;
+                color: #ffffff;
+                margin-bottom: 3rem;
+                opacity: 0;
+                animation: fadeInScale 2s ease 0.5s forwards;
+                text-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            }
+
+            .proposal-question {
+                font-family: "Cormorant Garamond", serif;
+                font-size: clamp(2.5rem, 8vw, 5rem);
+                font-weight: 600;
+                letter-spacing: 0.05em;
+                margin: 3rem 0;
+                background: none;
+                color: #ffffff;
+                -webkit-text-fill-color: #ffffff;
+                opacity: 0;
+                animation: fadeInScale 2s ease 1.5s forwards;
+                text-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+            }
+
+            .proposal-subtitle {
+                font-family: "Lora", serif;
+                font-size: clamp(1rem, 2.5vw, 1.3rem);
+                font-style: italic;
+                color: #ffffff;
+                margin-bottom: 2rem;
+                opacity: 0;
+                animation: fadeInUp 2s ease 2s forwards;
+                text-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+            }
+
+            .answer-buttons {
+                display: flex;
+                gap: 3rem;
+                justify-content: center;
+                margin-top: 4rem;
+                position: relative;
+                opacity: 0;
+                animation: fadeInUp 2s ease 2.5s forwards;
+            }
+
+            .answer-btn {
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                font-size: 4rem;
+                border: none;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: visible;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            }
+
+            .yes-btn {
+                background: linear-gradient(135deg, var(--accent), var(--rose));
+                position: relative;
+            }
+
+            .yes-btn::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                background: var(--primary);
+                border-radius: 50%;
+                transform: translate(-50%, -50%);
+                transition:
+                    width 0.6s,
+                    height 0.6s;
+                z-index: -1;
+            }
+
+            .yes-btn:hover::after {
+                width: 140px;
+                height: 140px;
+            }
+
+            .yes-btn:hover {
+                transform: scale(1.15);
+                box-shadow: 0 15px 40px rgba(232, 196, 160, 0.6);
+            }
+
+            .no-btn {
+                background: linear-gradient(135deg, #e8e8e8, #d0d0d0);
+                position: absolute;
+                will-change: transform;
+            }
+
+            .no-btn:hover {
+                transform: scale(1.05);
+            }
+
+            .koala-icon {
+                width: 84px;
+                height: 84px;
+                object-fit: contain;
+                user-select: none;
+                pointer-events: none;
+            }
+
+            /* Celebration */
+            #celebration {
+                background: linear-gradient(
+                    135deg,
+                    var(--rose) 0%,
+                    var(--accent) 100%
+                );
+                display: none;
+                flex-direction: column;
+            }
+
+            #celebration.show {
+                display: flex;
+            }
+
+            .celebration-text {
+                font-family: "Cormorant Garamond", serif;
+                font-size: clamp(3rem, 8vw, 6rem);
+                font-weight: 600;
+                text-align: center;
+                color: var(--light);
+                text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+                animation: pulse 2s ease infinite;
+                margin-bottom: 3rem;
+                text-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+            }
+
+            .coupons-title {
+                font-family: "Cormorant Garamond", serif;
+                font-size: clamp(2rem, 5vw, 3rem);
+                font-weight: 400;
+                color: var(--light);
+                text-align: center;
+                margin-bottom: 2rem;
+                text-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+            }
+
+            .coupons-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1.5rem;
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 0 2rem;
+            }
+
+            .coupon-card {
+                background: var(--light);
+                color: var(--dark);
+                border-radius: 12px;
+                padding: 1.5rem;
+                text-align: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .coupon-card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(
+                    135deg,
+                    transparent,
+                    rgba(212, 163, 115, 0.1)
+                );
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .coupon-card:hover {
+                transform: translateY(-5px) scale(1.05);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            }
+
+            .coupon-card:hover::before {
+                opacity: 1;
+            }
+
+            .coupon-title {
+                font-family: "Cormorant Garamond", serif;
+                font-size: 1.3rem;
+                font-weight: 600;
+                color: var(--dark);
+                margin-bottom: 0.5rem;
+            }
+
+            .coupon-subtitle {
+                font-size: 0.9rem;
+                color: var(--secondary);
+                font-style: italic;
+            }
+
+            .download-hint {
+                margin-top: 2rem;
+                text-align: center;
+                color: var(--light);
+                font-size: 0.95rem;
+                opacity: 0.8;
+            }
+
+            .replay-btn {
+                margin-top: 2.5rem;
+                padding: 1rem 3rem;
+                font-family: "Cormorant Garamond", serif;
+                font-size: 1.2rem;
+                letter-spacing: 0.08em;
+                background: transparent;
+                color: var(--light);
+                border: 2px solid var(--light);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-transform: uppercase;
+                display: inline-block;
+            }
+
+            .coupons-section {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .replay-btn:hover {
+                background: var(--light);
+                color: var(--dark);
+                transform: translateY(-2px);
+            }
+
+            /* Hearts Animation */
+            .hearts {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: 9999;
+                display: none;
+            }
+
+            .hearts.show {
+                display: block;
+            }
+
+            .heart {
+                position: absolute;
+                font-size: 30px;
+                animation: floatHeart 4s ease-in infinite;
+                opacity: 0;
+            }
+
+            @keyframes floatHeart {
+                0% {
+                    transform: translateY(100vh) scale(0);
+                    opacity: 0;
+                }
+                10% {
+                    opacity: 1;
+                }
+                90% {
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(-100vh) scale(1.5);
+                    opacity: 0;
+                }
+            }
+
+            @keyframes fadeInDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(50px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @keyframes fadeInScale {
+                from {
+                    opacity: 0;
+                    transform: scale(0.8);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+
+            @keyframes pulse {
+                0%,
+                100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
+            }
+
+            /* Scroll indicator */
+            .scroll-indicator {
+                position: absolute;
+                bottom: 2rem;
+                left: 50%;
+                transform: translateX(-50%);
+                opacity: 0;
+                animation:
+                    fadeInUp 2s ease 1.5s forwards,
+                    bounce 2s ease infinite 3.5s;
+            }
+
+            @keyframes bounce {
+                0%,
+                100% {
+                    transform: translateX(-50%) translateY(0);
+                }
+                50% {
+                    transform: translateX(-50%) translateY(-10px);
+                }
+            }
+
+            .scroll-indicator::before {
+                content: "\2193";
+                font-size: 2rem;
+                color: var(--primary);
+            }
+
+            /* Music Player Styles */
+            .music-player {
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                z-index: 1000;
+                transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            }
+
+            .player-container {
+                background: rgba(250, 248, 245, 0.95);
+                backdrop-filter: blur(10px);
+                border-radius: 20px;
+                padding: 1.5rem;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+                border: 1px solid rgba(212, 163, 115, 0.3);
+                display: flex;
+                gap: 1.5rem;
+                align-items: center;
+                max-width: 450px;
+                transition: all 0.3s ease;
+            }
+
+            .music-player.minimized .player-container {
+                padding: 0.8rem;
+                max-width: 60px;
+            }
+
+            .music-player.minimized .album-art {
+                width: 45px;
+                height: 45px;
+            }
+
+            .music-player.minimized .player-controls {
+                display: none;
+            }
+
+            .album-art {
+                position: relative;
+                width: 120px;
+                height: 120px;
+                flex-shrink: 0;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+            }
+
+            .album-art img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+            .vinyl-effect {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(
+                    circle,
+                    transparent 30%,
+                    rgba(0, 0, 0, 0.1) 31%,
+                    transparent 32%
+                );
+                animation: spin 3s linear infinite;
+                animation-play-state: paused;
+            }
+
+            .music-player.playing .vinyl-effect {
+                animation-play-state: running;
+            }
+
+            @keyframes spin {
+                from {
+                    transform: rotate(0deg);
+                }
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .player-controls {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 0.8rem;
+                min-width: 0;
+            }
+
+            .song-info {
+                margin-bottom: 0.3rem;
+            }
+
+            .song-title {
+                font-family: "Cormorant Garamond", serif;
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: var(--dark);
+                margin-bottom: 0.2rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .song-artist {
+                font-size: 0.85rem;
+                color: var(--secondary);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .progress-container {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .time {
+                font-size: 0.75rem;
+                color: var(--secondary);
+                min-width: 35px;
+                font-family: monospace;
+            }
+
+            .progress-bar {
+                flex: 1;
+                height: 6px;
+                background: rgba(212, 163, 115, 0.2);
+                border-radius: 3px;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, var(--primary), var(--rose));
+                border-radius: 3px;
+                width: 0%;
+                transition: width 0.1s linear;
+            }
+
+            .progress-slider {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                cursor: pointer;
+            }
+
+            .control-buttons {
+                display: flex;
+                align-items: center;
+                gap: 0.8rem;
+            }
+
+            .control-btn {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: none;
+                background: var(--primary);
+                color: var(--light);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 8px rgba(212, 163, 115, 0.3);
+            }
+
+            .control-btn:hover {
+                transform: scale(1.1);
+                background: var(--secondary);
+            }
+
+            .skip-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9rem;
+            }
+
+            .volume-btn {
+                width: 35px;
+                height: 35px;
+                background: transparent;
+                border: 1px solid var(--primary);
+                box-shadow: none;
+            }
+
+            .volume-slider {
+                width: 80px;
+                height: 4px;
+                -webkit-appearance: none;
+                appearance: none;
+                background: rgba(212, 163, 115, 0.2);
+                border-radius: 2px;
+                outline: none;
+                cursor: pointer;
+            }
+
+            .volume-slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 12px;
+                height: 12px;
+                background: var(--primary);
+                border-radius: 50%;
+                cursor: pointer;
+            }
+
+            .volume-slider::-moz-range-thumb {
+                width: 12px;
+                height: 12px;
+                background: var(--primary);
+                border-radius: 50%;
+                cursor: pointer;
+                border: none;
+            }
+
+            .toggle-player {
+                position: absolute;
+                top: -10px;
+                right: -10px;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                background: var(--secondary);
+                color: var(--light);
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1rem;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+            }
+
+            .toggle-player:hover {
+                transform: scale(1.1);
+                background: var(--primary);
+            }
+
+            /* Photo sections */
+            .photo-container {
+                margin: 2rem 0;
+                opacity: 0;
+                transform: scale(0.95);
+                transition: all 1s ease 1.2s;
+            }
+
+            .visible .photo-container {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            .memory-photo {
+                width: 100%;
+                max-width: 500px;
+                height: 400px;
+                object-fit: cover;
+                border-radius: 8px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+                border: 8px solid var(--light);
+                outline: 1px solid var(--primary);
+                margin: 0 auto;
+                display: block;
+            }
+
+            @media (max-width: 768px) {
+                #proposal {
+                    min-height: 100vh;
+                }
+
+                .answer-buttons {
+                    flex-direction: row;
+                    gap: 2rem;
+                    margin-top: 6rem;
+                }
+
+                .answer-btn {
+                    width: 100px;
+                    height: 100px;
+                    font-size: 3rem;
+                }
+
+                .emoji-face,
+                .emoji-base {
+                    font-size: 3rem;
+                }
+
+                .eyes-container {
+                    gap: 18px;
+                    top: 30%;
+                }
+
+                .eye {
+                    width: 12px;
+                    height: 12px;
+                }
+
+                .pupil {
+                    width: 6px;
+                    height: 6px;
+                }
+
+                .music-player {
+                    bottom: 1rem;
+                    right: 1rem;
+                    left: 1rem;
+                }
+
+                .player-container {
+                    max-width: 100%;
+                }
+
+                .album-art {
+                    width: 80px;
+                    height: 80px;
+                }
+
+                .volume-slider {
+                    width: 60px;
+                }
+
+                .memory-photo {
+                    height: 300px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Background Video (commented out for now)
+    <div class="video-background" id="videoBackground">
+        <video id="bgVideo" autoplay muted loop playsinline>
+            <source src="" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+    -->
+
+        <!-- Background Slideshow -->
+        <div class="slideshow-background" id="slideshowBackground">
+            <img src="" alt="Background slideshow" id="bgSlideshowImage" />
+            <div class="video-overlay"></div>
+        </div>
+
+        <!-- Particles Background -->
+        <div class="particles" id="particles"></div>
+
+        <!-- Hearts for celebration -->
+        <div class="hearts" id="hearts"></div>
+
+        <!-- Music Player -->
+        <div class="music-player" id="musicPlayer">
+            <div class="player-container">
+                <div class="album-art">
+                    <img src="" alt="Album Art" id="albumArt" />
+                    <div class="vinyl-effect"></div>
+                </div>
+                <div class="player-controls">
+                    <div class="song-info">
+                        <div class="song-title" id="songTitle">
+                            Your Favorite Song
+                        </div>
+                        <div class="song-artist" id="songArtist">
+                            Artist Name
+                        </div>
+                    </div>
+                    <div class="progress-container">
+                        <span class="time" id="currentTime">0:00</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                            <input
+                                type="range"
+                                class="progress-slider"
+                                id="progressSlider"
+                                min="0"
+                                max="100"
+                                value="0"
+                            />
+                        </div>
+                        <span class="time" id="duration">0:00</span>
+                    </div>
+                    <div class="control-buttons">
+                        <button class="control-btn skip-btn" id="prevBtn">
+                            ⏮
+                        </button>
+                        <button class="control-btn" id="playPauseBtn">
+                            <span class="play-icon">▶</span>
+                            <span class="pause-icon" style="display: none"
+                                >⏸</span
+                            >
+                        </button>
+                        <button class="control-btn skip-btn" id="nextBtn">
+                            ⏭
+                        </button>
+                        <button class="control-btn volume-btn" id="volumeBtn">
+                            🔊
+                        </button>
+                        <input
+                            type="range"
+                            class="volume-slider"
+                            id="volumeSlider"
+                            min="0"
+                            max="100"
+                            value="70"
+                        />
+                    </div>
+                </div>
+                <button class="toggle-player" id="togglePlayer">
+                    <span>♫</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Audio Element -->
+        <audio id="bgMusic" loop>
+            <source src="" type="audio/mpeg" />
+        </audio>
+
+        <!-- Landing Section -->
+        <section class="section visible" id="landing">
+            <h1 class="main-title">For You</h1>
+            <p class="subtitle">A journey through our story</p>
+            <button class="start-btn" onclick="startJourneyWithMusic()">
+                <span>BEGIN</span>
+            </button>
+            <div class="scroll-indicator"></div>
+        </section>
+
+        <!-- Memory 1 -->
+        <section class="section memory-section" id="memory1">
+            <div class="memory-content">
+                <div class="memory-number">01</div>
+                <h2 class="memory-title">The First Moment</h2>
+                <div class="photo-container">
+                    <img
+                        src=""
+                        alt="Our first moment together"
+                        class="memory-photo"
+                        id="photo1"
+                    />
+                </div>
+                <p class="memory-text">
+                    From the very first time I saw you, I knew there was
+                    something special. Your smile lit up the room, and in that
+                    moment, my world changed. Every moment since then has been
+                    an adventure I never want to end.
+                </p>
+                <button class="continue-btn" onclick="nextSection('memory2')">
+                    Continue &rarr;
+                </button>
+            </div>
+        </section>
+
+        <!-- Memory 2 -->
+        <section class="section memory-section" id="memory2">
+            <div class="memory-content">
+                <div class="memory-number">02</div>
+                <h2 class="memory-title">One Year of Us</h2>
+                <div class="photo-container">
+                    <img
+                        src=""
+                        alt="Growing together"
+                        class="memory-photo"
+                        id="photo2"
+                    />
+                </div>
+                <p class="memory-text">
+                    This past year with you has been the best year of my life.
+                    Through every laugh, every adventure, and every quiet
+                    moment, you've shown me what it means to truly care for
+                    someone. You are my best friend, my joy, my everything.
+                </p>
+                <button class="continue-btn" onclick="nextSection('memory3')">
+                    Continue &rarr;
+                </button>
+            </div>
+        </section>
+
+        <!-- Memory 3 -->
+        <section class="section memory-section" id="memory3">
+            <div class="memory-content">
+                <div class="memory-number">03</div>
+                <h2 class="memory-title">Many More to Come</h2>
+                <div class="photo-container">
+                    <img
+                        src=""
+                        alt="Forever starts now"
+                        class="memory-photo"
+                        id="photo3"
+                    />
+                </div>
+                <p class="memory-text">
+                    I can't wait to create more memories with you. More
+                    adventures, more laughter, more of everything that makes us,
+                    us. You make every day brighter, and I'm so grateful you're
+                    mine.
+                </p>
+                <button class="continue-btn" onclick="nextSection('proposal')">
+                    Continue &rarr;
+                </button>
+            </div>
+        </section>
+
+        <!-- Proposal Section -->
+        <section class="section" id="proposal">
+            <div class="proposal-content">
+                <h2 class="proposal-title">This Valentine's Day...</h2>
+                <div class="proposal-question">Will You Be My Valentine?</div>
+                <p class="proposal-subtitle">
+                    Again and again, forever and always &#x2764;&#xFE0F;
+                </p>
+                <div class="answer-buttons" id="answerButtons">
+                    <button
+                        class="answer-btn yes-btn"
+                        id="yesBtn"
+                        onclick="sayYes()"
+                    >
+                        <img
+                            class="koala-icon"
+                            src="koala_happy.png"
+                            alt="Happy koala"
+                        />
+                    </button>
+                    <button class="answer-btn no-btn" id="noBtn">
+                        <img
+                            class="koala-icon"
+                            src="koala_sad.png"
+                            alt="Sad koala"
+                        />
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Celebration Section -->
+        <section class="section" id="celebration">
+            <div class="celebration-text">
+                She said YES! &#x1F495;<br />
+                <span style="font-size: 0.5em; display: block; margin-top: 1rem"
+                    >Happy Valentine's Day, my love!</span
+                >
+            </div>
+
+            <div class="coupons-section">
+                <h3 class="coupons-title">
+                    Your Special Love Coupons &#x1F381;
+                </h3>
+                <div class="coupons-grid">
+                    <div
+                        class="coupon-card"
+                        onclick="downloadCoupon('coupon-hugs.png')"
+                    >
+                        <div class="coupon-title">Unlimited Hugs</div>
+                        <div class="coupon-subtitle">Click to download</div>
+                    </div>
+                    <div
+                        class="coupon-card"
+                        onclick="downloadCoupon('coupon-kisses.png')"
+                    >
+                        <div class="coupon-title">Unlimited Kisses</div>
+                        <div class="coupon-subtitle">Click to download</div>
+                    </div>
+                    <div
+                        class="coupon-card"
+                        onclick="downloadCoupon('coupon-cuddles.png')"
+                    >
+                        <div class="coupon-title">Unlimited Cuddles</div>
+                        <div class="coupon-subtitle">Click to download</div>
+                    </div>
+                    <div
+                        class="coupon-card"
+                        onclick="downloadCoupon('coupon-date-night.png')"
+                    >
+                        <div class="coupon-title">Date Night</div>
+                        <div class="coupon-subtitle">Click to download</div>
+                    </div>
+                    <div
+                        class="coupon-card"
+                        onclick="downloadCoupon('coupon-breakfast.png')"
+                    >
+                        <div class="coupon-title">Breakfast in Bed</div>
+                        <div class="coupon-subtitle">Click to download</div>
+                    </div>
+                    <div
+                        class="coupon-card"
+                        onclick="downloadCoupon('coupon-movie.png')"
+                    >
+                        <div class="coupon-title">Movie Marathon</div>
+                        <div class="coupon-subtitle">Click to download</div>
+                    </div>
+                </div>
+                <p class="download-hint">
+                    &#x1F4A1; Click on any coupon to download and save it!
+                </p>
+                <button class="replay-btn" onclick="replayMagic()">
+                    Click here to experience the magic again
+                </button>
+            </div>
+        </section>
+
+        <script>
+            // ===== CUSTOMIZATION SECTION =====
+            // Replace these with your actual file paths
+            const CONFIG = {
+                // Background slideshow configuration
+                backgroundSlides: ["slide1.jpg", "slide2.jpg", "slide3.jpg"],
+                slideDurationMs: 3000, // 3 seconds per slide
+
+                // Video configuration (currently unused)
+                backgroundVideo: "background-video.mp4", // Background video file path
+
+                // Music Playlist configuration - Add as many songs as you want!
+                playlist: [
+                    {
+                        file: "Dekha Hi Nahi.mp3",
+                        title: "Dekha Hi Nahi",
+                        artist: "Osho Jain",
+                        albumArt: "dekha.png",
+                    },
+                    {
+                        file: "Arz Kiya Hai.mp3",
+                        title: "Arz Kiya Hai",
+                        artist: "Anuv Jain",
+                        albumArt: "arzkiya.png",
+                    },
+                    {
+                        file: "Tu hi hai.mp3",
+                        title: "Tu hi hai",
+                        artist: "Twinkle Aggrwal",
+                        albumArt: "tuhihai.png",
+                    },
+                    // Add more songs here following the same format!
+                ],
+
+                // Photo configuration
+                photo1: "photo1.jpg", // First moment photo
+                photo2: "photo2.jpg", // Growing together photo
+                photo3: "photo3.jpg", // Forever starts now photo
+
+                // Coupons configuration (make sure these files exist!)
+                coupons: {
+                    "coffeedate.png": "Coffee Date Coupon",
+                    "kisspass.png": "Kissing Coupon",
+                    "bearhug.png": "Tight Bear Hug Coupon",
+                    "freewish.png": "Wildcard Coupon",
+                    "slowdance.png": "Slow Dance Tutorial Coupon",
+                    "winner.png": "Uno for Head Coupon",
+                },
+            };
+
+            // Playlist management
+            let currentTrackIndex = 0;
+            let heartIntervalId = null;
+            let heartStopTimeoutId = null;
+
+            function loadTrack(index) {
+                if (index < 0 || index >= CONFIG.playlist.length) return;
+
+                currentTrackIndex = index;
+                const track = CONFIG.playlist[currentTrackIndex];
+                const audio = document.getElementById("bgMusic");
+                const albumArtImg = document.getElementById("albumArt");
+                const songTitleEl = document.getElementById("songTitle");
+                const songArtistEl = document.getElementById("songArtist");
+
+                // Update audio source
+                audio.src = track.file;
+
+                // Update album art with smooth transition
+                albumArtImg.style.opacity = "0";
+                setTimeout(() => {
+                    albumArtImg.src = track.albumArt;
+                    albumArtImg.onerror = function () {
+                        this.src =
+                            'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"%3E%3Crect fill="%23d4a373" width="200" height="200"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="60" fill="%23faf8f5" text-anchor="middle" dominant-baseline="middle"%3E♫%3C/text%3E%3C/svg%3E';
+                    };
+                    albumArtImg.onload = function () {
+                        this.style.opacity = "1";
+                    };
+                }, 200);
+
+                // Update song info with animation
+                songTitleEl.style.opacity = "0";
+                songArtistEl.style.opacity = "0";
+                setTimeout(() => {
+                    songTitleEl.textContent = track.title;
+                    songArtistEl.textContent = track.artist;
+                    songTitleEl.style.opacity = "1";
+                    songArtistEl.style.opacity = "1";
+                }, 200);
+
+                // Play if music was already playing
+                if (musicStarted && !audio.paused) {
+                    audio
+                        .play()
+                        .catch((e) => console.log("Playback error:", e));
+                }
+            }
+
+            function nextTrack() {
+                const nextIndex =
+                    (currentTrackIndex + 1) % CONFIG.playlist.length;
+                loadTrack(nextIndex);
+            }
+
+            function prevTrack() {
+                const prevIndex =
+                    (currentTrackIndex - 1 + CONFIG.playlist.length) %
+                    CONFIG.playlist.length;
+                loadTrack(prevIndex);
+            }
+
+            // Background slideshow
+            let currentSlideIndex = 0;
+            function initializeSlideshow() {
+                const slides = CONFIG.backgroundSlides || [];
+                const slideImg = document.getElementById("bgSlideshowImage");
+                const slideshowBg = document.getElementById(
+                    "slideshowBackground",
+                );
+
+                if (!slideImg || slides.length === 0) {
+                    if (slideshowBg) {
+                        slideshowBg.style.display = "none";
+                    }
+                    return;
+                }
+
+                slideImg.src = slides[0];
+
+                if (slides.length === 1) return;
+
+                const duration = CONFIG.slideDurationMs || 3000;
+                setInterval(() => {
+                    slideImg.classList.add("fade-out");
+                    setTimeout(() => {
+                        currentSlideIndex =
+                            (currentSlideIndex + 1) % slides.length;
+                        slideImg.src = slides[currentSlideIndex];
+                        slideImg.classList.remove("fade-out");
+                    }, 1200);
+                }, duration);
+            }
+
+            // Initialize media
+            function initializeMedia() {
+                const albumArtImg = document.getElementById("albumArt");
+                const songTitleEl = document.getElementById("songTitle");
+                const songArtistEl = document.getElementById("songArtist");
+
+                // Set background slideshow
+                initializeSlideshow();
+
+                // Add smooth transitions to song info elements
+                albumArtImg.style.transition = "opacity 0.3s ease";
+                songTitleEl.style.transition = "opacity 0.3s ease";
+                songArtistEl.style.transition = "opacity 0.3s ease";
+
+                // Load first track from playlist
+                if (CONFIG.playlist && CONFIG.playlist.length > 0) {
+                    loadTrack(0);
+                }
+
+                // Set photos
+                document.getElementById("photo1").src = CONFIG.photo1;
+                document.getElementById("photo2").src = CONFIG.photo2;
+                document.getElementById("photo3").src = CONFIG.photo3;
+
+                // Add error handling for photos
+                document.querySelectorAll(".memory-photo").forEach((img) => {
+                    img.onerror = function () {
+                        this.style.display = "none";
+                    };
+                });
+            }
+
+            // Download coupon function
+            function downloadCoupon(filename) {
+                const link = document.createElement("a");
+                link.href = filename;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Show a cute notification
+                showNotification("\u{1F495} Coupon downloaded! Use it wisely!");
+            }
+
+            // Show notification
+            function showNotification(message) {
+                const notification = document.createElement("div");
+                notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: var(--primary);
+                color: var(--light);
+                padding: 1.5rem 3rem;
+                border-radius: 12px;
+                font-family: 'Lora', serif;
+                font-size: 1.1rem;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+                z-index: 10000;
+                animation: fadeInScale 0.3s ease;
+            `;
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.style.animation = "fadeOutScale 0.3s ease";
+                    setTimeout(() => notification.remove(), 300);
+                }, 2000);
+            }
+
+            // Toggle slideshow visibility: show it before proposal, hide it on proposal section
+            const videoObserver = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.target.id !== "proposal") return;
+                        const videoBg = document.getElementById(
+                            "slideshowBackground",
+                        );
+                        if (entry.isIntersecting) {
+                            videoBg.classList.add("hidden");
+                        } else {
+                            videoBg.classList.remove("hidden");
+                        }
+                    });
+                },
+                { threshold: 0.5 },
+            );
+
+            // Observe proposal section
+            videoObserver.observe(document.getElementById("proposal"));
+
+            // Music player functionality
+            const audio = document.getElementById("bgMusic");
+            const playPauseBtn = document.getElementById("playPauseBtn");
+            const playIcon = playPauseBtn.querySelector(".play-icon");
+            const pauseIcon = playPauseBtn.querySelector(".pause-icon");
+            const progressSlider = document.getElementById("progressSlider");
+            const progressFill = document.getElementById("progressFill");
+            const currentTimeEl = document.getElementById("currentTime");
+            const durationEl = document.getElementById("duration");
+            const volumeSlider = document.getElementById("volumeSlider");
+            const volumeBtn = document.getElementById("volumeBtn");
+            const musicPlayer = document.getElementById("musicPlayer");
+            const togglePlayerBtn = document.getElementById("togglePlayer");
+            const prevBtn = document.getElementById("prevBtn");
+            const nextBtn = document.getElementById("nextBtn");
+
+            // Initialize on load
+            window.addEventListener("load", () => {
+                initializeMedia();
+                audio.volume = 0.7;
+            });
+
+            // Auto-advance to next song when current song ends
+            audio.addEventListener("ended", () => {
+                nextTrack();
+            });
+
+            // Skip to next track
+            nextBtn.addEventListener("click", () => {
+                nextTrack();
+            });
+
+            // Skip to previous track
+            prevBtn.addEventListener("click", () => {
+                prevTrack();
+            });
+
+            // Auto-play music when user starts journey
+            let musicStarted = false;
+            function startJourneyWithMusic() {
+                if (!musicStarted) {
+                    audio
+                        .play()
+                        .catch((e) => console.log("Auto-play prevented:", e));
+                    musicStarted = true;
+                    musicPlayer.classList.add("playing");
+                }
+                startJourney();
+            }
+
+            // Play/Pause functionality
+            playPauseBtn.addEventListener("click", () => {
+                if (audio.paused) {
+                    audio.play();
+                    playIcon.style.display = "none";
+                    pauseIcon.style.display = "block";
+                    musicPlayer.classList.add("playing");
+                } else {
+                    audio.pause();
+                    playIcon.style.display = "block";
+                    pauseIcon.style.display = "none";
+                    musicPlayer.classList.remove("playing");
+                }
+            });
+
+            // Update progress bar
+            audio.addEventListener("timeupdate", () => {
+                if (!isFinite(audio.duration) || audio.duration === 0) {
+                    return;
+                }
+                const progress = (audio.currentTime / audio.duration) * 100;
+                progressFill.style.width = progress + "%";
+                progressSlider.value = progress;
+                currentTimeEl.textContent = formatTime(audio.currentTime);
+            });
+
+            // Set duration when loaded
+            audio.addEventListener("loadedmetadata", () => {
+                durationEl.textContent = formatTime(audio.duration);
+            });
+
+            // Seek functionality
+            progressSlider.addEventListener("input", (e) => {
+                const time = (e.target.value / 100) * audio.duration;
+                audio.currentTime = time;
+            });
+
+            // Volume control
+            volumeSlider.addEventListener("input", (e) => {
+                audio.volume = e.target.value / 100;
+                updateVolumeIcon();
+            });
+
+            volumeBtn.addEventListener("click", () => {
+                if (audio.volume > 0) {
+                    audio.volume = 0;
+                    volumeSlider.value = 0;
+                } else {
+                    audio.volume = 0.7;
+                    volumeSlider.value = 70;
+                }
+                updateVolumeIcon();
+            });
+
+            function updateVolumeIcon() {
+                if (audio.volume === 0) {
+                    volumeBtn.textContent = "🔇";
+                } else if (audio.volume < 0.5) {
+                    volumeBtn.textContent = "🔉";
+                } else {
+                    volumeBtn.textContent = "🔊";
+                }
+            }
+
+            // Toggle player minimize
+            togglePlayerBtn.addEventListener("click", () => {
+                musicPlayer.classList.toggle("minimized");
+            });
+
+            // Format time helper
+            function formatTime(seconds) {
+                if (isNaN(seconds)) return "0:00";
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, "0")}`;
+            }
+
+            // Create floating particles
+            function createParticles() {
+                const particlesContainer = document.getElementById("particles");
+                for (let i = 0; i < 30; i++) {
+                    const particle = document.createElement("div");
+                    particle.className = "particle";
+                    particle.style.left = Math.random() * 100 + "%";
+                    particle.style.animationDelay = Math.random() * 8 + "s";
+                    particle.style.animationDuration =
+                        Math.random() * 4 + 6 + "s";
+                    particlesContainer.appendChild(particle);
+                }
+            }
+
+            createParticles();
+
+            // Smooth scroll to section
+            function scrollToSection(sectionId) {
+                const section = document.getElementById(sectionId);
+                section.scrollIntoView({ behavior: "smooth" });
+
+                setTimeout(() => {
+                    section.classList.add("visible");
+                }, 500);
+            }
+
+            function startJourney() {
+                scrollToSection("memory1");
+            }
+
+            function nextSection(sectionId) {
+                scrollToSection(sectionId);
+            }
+
+            function resetHearts() {
+                const heartsContainer = document.getElementById("hearts");
+                if (heartIntervalId) {
+                    clearInterval(heartIntervalId);
+                    heartIntervalId = null;
+                }
+                if (heartStopTimeoutId) {
+                    clearTimeout(heartStopTimeoutId);
+                    heartStopTimeoutId = null;
+                }
+                if (heartsContainer) {
+                    heartsContainer.classList.remove("show");
+                    heartsContainer.innerHTML = "";
+                }
+            }
+
+            function replayMagic() {
+                const celebration = document.getElementById("celebration");
+                if (celebration) {
+                    celebration.classList.remove("show");
+                }
+                resetHearts();
+                scrollToSection("landing");
+            }
+
+            // Intersection Observer for sections
+            const observerOptions = {
+                threshold: 0.3,
+                rootMargin: "0px",
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll(".section").forEach((section) => {
+                observer.observe(section);
+            });
+
+            // No button runs away from cursor with eye tracking
+            const noBtn = document.getElementById("noBtn");
+            const yesBtn = document.getElementById("yesBtn");
+            const pupilLeft = document.querySelector(".pupil-left");
+            const pupilRight = document.querySelector(".pupil-right");
+            let noBtnInitialized = false;
+
+            // Initialize no button position when proposal section is visible
+            const proposalObserver = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (
+                            entry.target.id === "proposal" &&
+                            entry.isIntersecting &&
+                            !noBtnInitialized
+                        ) {
+                            // Set initial position relative to yes button at 200px distance
+                            const yesRect = yesBtn.getBoundingClientRect();
+                            noBtn.style.position = "absolute";
+                            noBtn.style.left = "200px"; // Start at 200px to the right
+                            noBtn.style.top = "0px";
+                            noBtnInitialized = true;
+                        }
+                    });
+                },
+                { threshold: 0.5 },
+            );
+
+            proposalObserver.observe(document.getElementById("proposal"));
+
+            // Track cursor and move no button
+            document.addEventListener("mousemove", (e) => {
+                if (!noBtnInitialized) return;
+
+                const noBtnRect = noBtn.getBoundingClientRect();
+                const yesBtnRect = yesBtn.getBoundingClientRect();
+                const noBtnCenterX = noBtnRect.left + noBtnRect.width / 2;
+                const noBtnCenterY = noBtnRect.top + noBtnRect.height / 2;
+                const yesBtnCenterX = yesBtnRect.left + yesBtnRect.width / 2;
+                const yesBtnCenterY = yesBtnRect.top + yesBtnRect.height / 2;
+
+                // Calculate distance from cursor to no button
+                const distX = e.clientX - noBtnCenterX;
+                const distY = e.clientY - noBtnCenterY;
+                const distance = Math.sqrt(distX * distX + distY * distY);
+
+                // Eye tracking - make pupils follow cursor
+                const eyeTrackDistance = 200;
+                if (distance < eyeTrackDistance) {
+                    const angle = Math.atan2(distY, distX);
+                    const pupilMoveDistance = 3.5; // How far pupils can move from center
+
+                    const pupilX = Math.cos(angle) * pupilMoveDistance;
+                    const pupilY = Math.sin(angle) * pupilMoveDistance;
+
+                    pupilLeft.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
+                    pupilRight.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
+                } else {
+                    // Reset pupils to center
+                    pupilLeft.style.transform = "translate(0, 0)";
+                    pupilRight.style.transform = "translate(0, 0)";
+                }
+
+                // Move button when cursor gets close
+                const escapeRadius = 120; // Distance at which button starts moving
+
+                if (distance < escapeRadius) {
+                    // Calculate the current position relative to YES button
+                    let currentX = noBtnCenterX - yesBtnCenterX;
+                    let currentY = noBtnCenterY - yesBtnCenterY;
+
+                    // Calculate angle from cursor to no button
+                    const angleFromCursor = Math.atan2(
+                        noBtnCenterY - e.clientY,
+                        noBtnCenterX - e.clientX,
+                    );
+
+                    // Calculate how much to move based on distance (closer = faster movement)
+                    const moveIntensity =
+                        (escapeRadius - distance) / escapeRadius;
+                    const moveDistance = 40 * moveIntensity;
+
+                    // Move perpendicular to the line from cursor to button (orbital movement)
+                    // This creates circular motion around the YES button
+                    const perpendicularAngle = angleFromCursor + Math.PI / 2;
+
+                    // Add movement in perpendicular direction (creates orbiting)
+                    let newX =
+                        currentX + Math.cos(perpendicularAngle) * moveDistance;
+                    let newY =
+                        currentY + Math.sin(perpendicularAngle) * moveDistance;
+
+                    // Calculate distance from YES button
+                    const distanceFromYes = Math.sqrt(
+                        newX * newX + newY * newY,
+                    );
+
+                    // Keep button at exactly 200px radius, pushing it toward YES if it goes beyond
+                    const targetRadius = 200;
+                    if (distanceFromYes > targetRadius) {
+                        // Pull button back toward YES button (repulsion toward YES)
+                        const angleToYes = Math.atan2(newY, newX);
+                        newX = Math.cos(angleToYes) * targetRadius;
+                        newY = Math.sin(angleToYes) * targetRadius;
+                    } else if (distanceFromYes < targetRadius - 20) {
+                        // If too close to YES, push back out to maintain orbit
+                        const angleToYes = Math.atan2(newY, newX);
+                        newX = Math.cos(angleToYes) * targetRadius;
+                        newY = Math.sin(angleToYes) * targetRadius;
+                    }
+
+                    // Apply smooth movement
+                    noBtn.style.transform = `translate(${newX}px, ${newY}px)`;
+                    noBtn.style.transition = "transform 0.15s ease-out";
+                }
+            });
+
+            // Prevent clicking the no button
+            noBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                // Make it jump to opposite side of the circle when clicked
+                const currentTransform = noBtn.style.transform;
+                const currentX = parseFloat(
+                    currentTransform.match(/translate\((-?\d+\.?\d*)px/)?.[1] ||
+                        0,
+                );
+                const currentY = parseFloat(
+                    currentTransform.match(/,\s*(-?\d+\.?\d*)px/)?.[1] || 0,
+                );
+
+                // Jump to opposite side (180 degrees around the circle)
+                const currentAngle = Math.atan2(currentY, currentX);
+                const oppositeAngle = currentAngle + Math.PI;
+                const radius = 200;
+
+                noBtn.style.transform = `translate(${Math.cos(oppositeAngle) * radius}px, ${Math.sin(oppositeAngle) * radius}px)`;
+                noBtn.style.transition =
+                    "transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)";
+            });
+
+            // Yes button clicked
+            function sayYes() {
+                // Show celebration section
+                document.getElementById("celebration").classList.add("show");
+                scrollToSection("celebration");
+
+                // Create hearts animation
+                const heartsContainer = document.getElementById("hearts");
+                heartsContainer.classList.add("show");
+
+                function createHeart() {
+                    const heart = document.createElement("div");
+                    heart.className = "heart";
+                    heart.innerHTML = "&#x2764;&#xFE0F;";
+                    heart.style.left = Math.random() * 100 + "%";
+                    heart.style.animationDuration = Math.random() * 2 + 3 + "s";
+                    heart.style.animationDelay = Math.random() * 1 + "s";
+                    heartsContainer.appendChild(heart);
+
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 5000);
+                }
+
+                // Create multiple hearts
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(createHeart, i * 100);
+                }
+
+                // Keep creating hearts
+                if (heartIntervalId) {
+                    clearInterval(heartIntervalId);
+                }
+                if (heartStopTimeoutId) {
+                    clearTimeout(heartStopTimeoutId);
+                }
+                heartIntervalId = setInterval(createHeart, 300);
+
+                // Stop after 10 seconds
+                heartStopTimeoutId = setTimeout(() => {
+                    if (heartIntervalId) {
+                        clearInterval(heartIntervalId);
+                        heartIntervalId = null;
+                    }
+                }, 10000);
+            }
+
+            // Allow scrolling on celebration (no wheel lock)
+
+            // Add fadeOutScale animation
+            const style = document.createElement("style");
+            style.textContent = `
+            @keyframes fadeOutScale {
+                from {
+                    opacity: 1;
+                    transform: translate(-50%, -50%) scale(1);
+                }
+                to {
+                    opacity: 0;
+                    transform: translate(-50%, -50%) scale(0.8);
+                }
+            }
+        `;
+            document.head.appendChild(style);
+        </script>
+    </body>
+</html>
