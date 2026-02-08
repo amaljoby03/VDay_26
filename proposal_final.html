@@ -579,19 +579,23 @@
                 stroke-width: 1;
             }
 
-            /* Bouquet Section (standalone page) */
+            /* Bouquet Section */
             .bouquet-section {
                 background: linear-gradient(135deg, #0a1628 0%, #1a3050 100%);
                 flex-direction: column;
                 min-height: 100vh;
+                padding: 1rem 1.5rem;
             }
 
             .bouquet-section-content {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
                 text-align: center;
                 position: relative;
                 z-index: 1;
-                max-width: 600px;
                 width: 100%;
+                max-width: 500px;
             }
 
             .bouquet-title {
@@ -599,7 +603,7 @@
                 font-size: clamp(2rem, 5vw, 3rem);
                 font-weight: 300;
                 color: #ffffff;
-                margin-bottom: 0.5rem;
+                margin-bottom: 0.35rem;
                 text-shadow: 0 4px 16px rgba(0,0,0,0.4);
             }
 
@@ -607,41 +611,93 @@
                 font-family: "Lora", serif;
                 font-size: 1rem;
                 color: rgba(255,255,255,0.7);
-                margin-bottom: 1rem;
+                margin-bottom: 0.35rem;
                 animation: pulse 2s ease infinite;
+                transition: opacity 0.5s ease;
             }
 
+            .bouquet-subtitle.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            .bouquet-section .bouquet-counter {
+                font-family: "Lora", serif;
+                font-size: 0.9rem;
+                color: rgba(255,255,255,0.6);
+                margin-bottom: 0.6rem;
+                transition: opacity 0.5s ease;
+            }
+
+            .bouquet-section .bouquet-counter.hidden {
+                opacity: 0;
+            }
+
+            .bouquet-scene {
+                position: relative;
+                width: 360px;
+                height: 340px;
+                margin-top: 0.2rem;
+                transform: scale(0.95);
+                transform-origin: top center;
+            }
+
+            /* Tulip grid: 5-col grid for tapping phase */
             .tulip-grid {
-                display: flex;
-                flex-wrap: wrap;
+                display: grid;
+                grid-template-columns: repeat(5, 60px);
+                gap: 8px;
                 justify-content: center;
-                gap: 0.5rem;
-                padding: 1.5rem 0;
-                transition: all 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                justify-items: center;
+                width: 100%;
+                position: relative;
+                z-index: 2;
             }
 
+            /* Gathered: switch to absolute stacking for bouquet fan */
             .tulip-grid.gathered {
-                gap: 0;
-                transform: scale(0.85);
+                display: block;
+                position: relative;
+                height: 320px;
             }
 
             .tulip-grid.gathered .tulip-btn {
-                margin: 0 -8px;
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform-origin: bottom center;
             }
+
+            .tulip-grid.gathered .tulip-btn:nth-child(1)  { transform: translateX(-50%) rotate(-22deg); z-index: 1; }
+            .tulip-grid.gathered .tulip-btn:nth-child(2)  { transform: translateX(-50%) rotate(-16deg); z-index: 2; }
+            .tulip-grid.gathered .tulip-btn:nth-child(3)  { transform: translateX(-50%) rotate(-10deg); z-index: 3; }
+            .tulip-grid.gathered .tulip-btn:nth-child(4)  { transform: translateX(-50%) rotate(-4deg);  z-index: 4; }
+            .tulip-grid.gathered .tulip-btn:nth-child(5)  { transform: translateX(-50%) rotate(2deg);   z-index: 5; }
+            .tulip-grid.gathered .tulip-btn:nth-child(6)  { transform: translateX(-50%) rotate(8deg);   z-index: 4; }
+            .tulip-grid.gathered .tulip-btn:nth-child(7)  { transform: translateX(-50%) rotate(14deg);  z-index: 3; }
+            .tulip-grid.gathered .tulip-btn:nth-child(8)  { transform: translateX(-50%) rotate(20deg);  z-index: 2; }
+            .tulip-grid.gathered .tulip-btn:nth-child(9)  { transform: translateX(-50%) rotate(-7deg);  z-index: 3; }
+            .tulip-grid.gathered .tulip-btn:nth-child(10) { transform: translateX(-50%) rotate(5deg);   z-index: 3; }
 
             .tulip-btn {
                 background: none;
                 border: none;
                 cursor: pointer;
-                width: 70px;
-                height: 150px;
+                width: 60px;
+                height: 140px;
                 padding: 0;
-                transition: transform 0.3s ease, filter 0.8s ease;
+                transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+                            filter 0.8s ease,
+                            left 1s ease,
+                            bottom 1s ease;
                 filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
             .tulip-btn:hover {
-                transform: scale(1.12);
+                filter: drop-shadow(0 4px 16px rgba(120,180,220,0.4)) brightness(1.1);
             }
 
             .tulip-btn svg {
@@ -655,31 +711,13 @@
                 transform-origin: center bottom;
             }
 
-            .tulip-btn.bud .petal-left {
-                transform: rotate(5deg) scaleY(0.7);
-                opacity: 0.6;
-            }
-            .tulip-btn.bud .petal-right {
-                transform: rotate(-5deg) scaleY(0.7);
-                opacity: 0.6;
-            }
-            .tulip-btn.bud .petal-back {
-                transform: scaleY(0.75) scaleX(0.85);
-                opacity: 0.6;
-            }
+            .tulip-btn.bud .petal-left  { transform: rotate(5deg) scaleY(0.7); opacity: 0.6; }
+            .tulip-btn.bud .petal-right { transform: rotate(-5deg) scaleY(0.7); opacity: 0.6; }
+            .tulip-btn.bud .petal-back  { transform: scaleY(0.75) scaleX(0.85); opacity: 0.6; }
 
-            .tulip-btn.bloomed .petal-left {
-                transform: rotate(-18deg) scaleY(1);
-                opacity: 1;
-            }
-            .tulip-btn.bloomed .petal-right {
-                transform: rotate(18deg) scaleY(1);
-                opacity: 1;
-            }
-            .tulip-btn.bloomed .petal-back {
-                transform: scaleY(1) scaleX(1);
-                opacity: 1;
-            }
+            .tulip-btn.bloomed .petal-left  { transform: rotate(-18deg) scaleY(1); opacity: 1; }
+            .tulip-btn.bloomed .petal-right { transform: rotate(18deg) scaleY(1); opacity: 1; }
+            .tulip-btn.bloomed .petal-back  { transform: scaleY(1) scaleX(1); opacity: 1; }
 
             .tulip-btn.bloomed {
                 filter: drop-shadow(0 4px 12px rgba(120, 180, 220, 0.5));
@@ -690,81 +728,54 @@
             }
 
             @keyframes bloomGlowBtn {
-                0% { filter: drop-shadow(0 0 0px rgba(120,180,220,0)); }
-                50% { filter: drop-shadow(0 0 20px rgba(120,180,220,0.7)); }
+                0%   { filter: drop-shadow(0 0 0px rgba(120,180,220,0)); }
+                50%  { filter: drop-shadow(0 0 20px rgba(120,180,220,0.7)); }
                 100% { filter: drop-shadow(0 4px 12px rgba(120,180,220,0.5)); }
             }
 
-            .bouquet-section .bouquet-counter {
-                position: relative;
-                top: auto;
-                left: auto;
-                transform: none;
-                font-family: "Lora", serif;
-                font-size: 0.9rem;
-                color: rgba(255,255,255,0.6);
-                margin-bottom: 0.5rem;
-                transition: opacity 0.5s ease;
-            }
-
-            .bouquet-section .bouquet-counter.hidden {
-                opacity: 0;
-            }
-
-            .bouquet-extras {
-                position: relative;
-                width: 100%;
-                max-width: 400px;
-                margin: 0 auto;
-                opacity: 0;
-                transform: scale(0.8);
-                transition: all 0.8s ease;
-                pointer-events: none;
-                height: 0;
-                overflow: visible;
-            }
-
-            .bouquet-extras.show {
-                opacity: 1;
-                transform: scale(1);
-                pointer-events: auto;
-                height: auto;
-            }
-
-            .bouquet-leaves {
-                position: relative;
-                width: 100%;
-                height: 60px;
-            }
-
-            .deco-leaf {
+            /* Bouquet wrap overlay — ribbon + bow at 1/3 from bottom */
+            .bouquet-ribbon-wrap {
                 position: absolute;
+                bottom: 18%;
+                left: 50%;
+                transform: translateX(-50%) scale(0);
+                width: 110px;
+                z-index: 3;
+                opacity: 0;
+                transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.4s;
                 pointer-events: none;
             }
 
-            .bouquet-wrap {
-                display: block;
-                width: 140px;
-                margin: 0 auto;
+            .bouquet-ribbon-wrap.show {
+                transform: translateX(-50%) scale(1);
+                opacity: 1;
             }
+
+            .bouquet-extras.show .bouquet-ribbon-wrap {
+                transform: translateX(-50%) scale(1);
+                opacity: 1;
+            }
+
+            /* Decorative leaves behind gathered tulips */
 
             .bouquet-section .bouquet-message {
-                position: relative;
-                top: auto;
-                left: auto;
-                transform: none;
+                position: static;
                 font-family: "Cormorant Garamond", serif;
                 font-size: 1.3rem;
                 color: #ffffff;
                 text-align: center;
-                margin-top: 1rem;
+                margin-top: 0.7rem;
                 opacity: 0;
-                transition: opacity 1s ease;
+                transform: translateY(8px);
+                transition:
+                    opacity 1.2s ease,
+                    transform 1.2s ease;
                 text-shadow: 0 3px 12px rgba(0,0,0,0.4);
             }
 
             .bouquet-section .bouquet-message.visible {
                 opacity: 1;
+                transform: translateY(0);
             }
 
             .bouquet-continue {
@@ -785,18 +796,23 @@
                     gap: 2rem;
                 }
 
-                .bouquet-container {
-                    width: 260px;
-                    height: 380px;
+                .bouquet-scene {
+                    width: 300px;
+                    height: 400px;
                 }
 
-                .bouquet-message {
-                    font-size: 1.1rem;
+                .tulip-grid {
+                    grid-template-columns: repeat(5, 50px);
+                    gap: 6px;
                 }
 
                 .tulip-btn {
-                    width: 55px;
-                    height: 120px;
+                    width: 50px;
+                    height: 115px;
+                }
+
+                .bouquet-ribbon-wrap {
+                    width: 100px;
                 }
             }
 
@@ -2226,10 +2242,10 @@
         <!-- Bouquet Section -->
         <section class="section bouquet-section" id="bouquetSection">
             <div class="bouquet-section-content">
-                <h2 class="bouquet-title">I picked these for you...</h2>
-                <p class="bouquet-subtitle">Tap each bud to make it bloom</p>
+                <h2 class="bouquet-title">I picked these tulips for you...</h2>
+                <p class="bouquet-subtitle" id="bouquetSubtitle">Tap each bud to make it bloom</p>
                 <div class="bouquet-counter" id="bouquetCounter">0 / 10 bloomed</div>
-                <div class="bouquet-container" style="position:relative;">
+                <div class="bouquet-scene" id="bouquetScene">
                     <div class="tulip-grid" id="tulipGrid">
                         <button type="button" class="tulip-btn bud" onclick="bloomThis(this)"><svg viewBox="0 0 60 140"><path d="M30 140 Q28 90 30 50" stroke="#4a8c3f" stroke-width="3" fill="none"/><path d="M29 100 Q12 88 16 78 Q22 88 29 95" fill="#5a9e4a"/><path d="M31 110 Q48 98 44 88 Q38 98 31 105" fill="#5a9e4a"/><ellipse class="petal petal-back" cx="30" cy="32" rx="11" ry="20" fill="#dff0fa"/><ellipse class="petal petal-left" cx="22" cy="34" rx="11" ry="22" fill="#a8d4e6"/><ellipse class="petal petal-right" cx="38" cy="34" rx="11" ry="22" fill="#c8e4f0"/></svg></button>
                         <button type="button" class="tulip-btn bud" onclick="bloomThis(this)"><svg viewBox="0 0 60 140"><path d="M30 140 Q28 90 30 50" stroke="#4a8c3f" stroke-width="3" fill="none"/><path d="M29 100 Q12 88 16 78 Q22 88 29 95" fill="#5a9e4a"/><path d="M31 110 Q48 98 44 88 Q38 98 31 105" fill="#5a9e4a"/><ellipse class="petal petal-back" cx="30" cy="32" rx="11" ry="20" fill="#d4ecf6"/><ellipse class="petal petal-left" cx="22" cy="34" rx="11" ry="22" fill="#90c8e0"/><ellipse class="petal petal-right" cx="38" cy="34" rx="11" ry="22" fill="#b8daea"/></svg></button>
@@ -2243,19 +2259,30 @@
                         <button type="button" class="tulip-btn bud" onclick="bloomThis(this)"><svg viewBox="0 0 60 140"><path d="M30 140 Q28 90 30 50" stroke="#4a8c3f" stroke-width="3" fill="none"/><path d="M29 100 Q12 88 16 78 Q22 88 29 95" fill="#5a9e4a"/><path d="M31 110 Q48 98 44 88 Q38 98 31 105" fill="#5a9e4a"/><ellipse class="petal petal-back" cx="30" cy="32" rx="11" ry="20" fill="#d2ecf5"/><ellipse class="petal petal-left" cx="22" cy="34" rx="11" ry="22" fill="#88c4de"/><ellipse class="petal petal-right" cx="38" cy="34" rx="11" ry="22" fill="#b2d8e8"/></svg></button>
                     </div>
                     <div class="bouquet-extras" id="bouquetExtras">
-                        <div class="bouquet-leaves">
-                            <svg class="deco-leaf" style="left:-5%;top:0;width:45%;transform:rotate(-25deg) scaleX(-1);transform-origin:bottom right;" viewBox="0 0 80 180"><path d="M40 180 Q38 100 40 10 Q65 50 60 100 Q55 140 40 180" fill="#5aad72" opacity="0.8"/><path d="M40 180 Q38 100 40 10" stroke="#4a9a62" stroke-width="2" fill="none"/></svg>
-                            <svg class="deco-leaf" style="right:-5%;top:0;width:45%;transform:rotate(22deg);transform-origin:bottom left;" viewBox="0 0 80 180"><path d="M40 180 Q38 100 40 10 Q65 50 60 100 Q55 140 40 180" fill="#5aad72" opacity="0.8"/><path d="M40 180 Q38 100 40 10" stroke="#4a9a62" stroke-width="2" fill="none"/></svg>
-                            <svg class="deco-leaf" style="left:8%;top:5%;width:38%;transform:rotate(-12deg) scaleX(-1);transform-origin:bottom center;" viewBox="0 0 80 180"><path d="M40 180 Q38 100 40 10 Q65 50 60 100 Q55 140 40 180" fill="#6dbe82" opacity="0.65"/><path d="M40 180 Q38 100 40 10" stroke="#5aad72" stroke-width="2" fill="none"/></svg>
-                            <svg class="deco-leaf" style="right:8%;top:3%;width:38%;transform:rotate(15deg);transform-origin:bottom center;" viewBox="0 0 80 180"><path d="M40 180 Q38 100 40 10 Q65 50 60 100 Q55 140 40 180" fill="#6dbe82" opacity="0.65"/><path d="M40 180 Q38 100 40 10" stroke="#5aad72" stroke-width="2" fill="none"/></svg>
-                            <svg class="deco-leaf" style="left:22%;top:10%;width:30%;transform:rotate(-5deg);transform-origin:bottom center;" viewBox="0 0 80 180"><path d="M40 180 Q38 100 40 10 Q65 50 60 100 Q55 140 40 180" fill="#80cc92" opacity="0.5"/><path d="M40 180 Q38 100 40 10" stroke="#6dbe82" stroke-width="2" fill="none"/></svg>
-                            <svg class="deco-leaf" style="right:22%;top:8%;width:30%;transform:rotate(8deg);transform-origin:bottom center;" viewBox="0 0 80 180"><path d="M40 180 Q38 100 40 10 Q65 50 60 100 Q55 140 40 180" fill="#80cc92" opacity="0.5"/><path d="M40 180 Q38 100 40 10" stroke="#6dbe82" stroke-width="2" fill="none"/></svg>
+                        <!-- Ribbon/bow at 1/3 from bottom -->
+                        <div class="bouquet-ribbon-wrap" id="bouquetRibbon">
+                        <svg viewBox="0 0 120 50" width="100%">
+                            <path d="M30 22 Q10 10 18 0 Q30 8 60 6 Q90 8 102 0 Q110 10 90 22" fill="#e8849e" opacity="0.95"/>
+                            <ellipse cx="60" cy="22" rx="8" ry="6" fill="#d06880"/>
+                            <rect x="30" y="24" width="60" height="7" rx="3" fill="#e8b0c0" opacity="0.9"/>
+                            <rect x="33" y="33" width="54" height="6" rx="3" fill="#d4909f" opacity="0.85"/>
+                            <rect x="36" y="41" width="48" height="5" rx="3" fill="#e8b0c0" opacity="0.8"/>
+                            <path d="M42 48 Q36 54 28 56" stroke="#e8849e" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+                            <path d="M78 48 Q84 54 92 56" stroke="#e8849e" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+                        </svg>
                         </div>
-                        <svg class="bouquet-wrap" viewBox="0 0 140 55"><rect x="40" y="20" width="60" height="8" rx="3" fill="#e8b0c0" opacity="0.9"/><rect x="43" y="30" width="54" height="7" rx="3" fill="#d4909f" opacity="0.85"/><rect x="46" y="39" width="48" height="7" rx="3" fill="#e8b0c0" opacity="0.8"/><path d="M55 18 Q35 8 42 -2 Q52 5 70 3 Q88 5 98 -2 Q105 8 85 18" fill="#e8849e" opacity="0.9"/><ellipse cx="70" cy="18" rx="7" ry="5" fill="#d06880"/><path d="M58 46 Q54 52 48 55" stroke="#e8849e" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.7"/><path d="M82 46 Q86 52 92 55" stroke="#e8849e" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.7"/></svg>
                     </div>
                 </div>
-                <div class="bouquet-message" id="bouquetMessage">Every petal blooms for you 🌷</div>
-                <button class="continue-btn bouquet-continue" id="bouquetContinueBtn" onclick="nextSection('proposal')">Continue &rarr;</button>
+                <div class="bouquet-message" id="bouquetMessage">
+                    Every petal blooms for you 🌷
+                </div>
+                <button
+                    class="continue-btn bouquet-continue"
+                    id="bouquetContinueBtn"
+                    onclick="nextSection('proposal')"
+                >
+                    Continue &rarr;
+                </button>
             </div>
         </section>
 
@@ -2263,9 +2290,9 @@
         <section class="section" id="proposal">
             <div class="proposal-content">
                 <h2 class="proposal-title">This Valentine's Day...</h2>
-                <div class="proposal-question">Will You Be My Valentine?</div>
+                <div class="proposal-question">Will You Be My Valentine, Naomi?</div>
                 <p class="proposal-subtitle">
-                    Again and again, forever and always &#x2764;&#xFE0F;
+                    Again and again, forever and always baby... &#x2764;&#xFE0F;
                 </p>
                 <div class="answer-buttons" id="answerButtons">
                     <button
@@ -2293,7 +2320,7 @@
         <!-- Celebration Section -->
         <section class="section" id="celebration">
             <div class="celebration-text">
-                She said YES! &#x1F495;<br />
+                She said YES! LESGOOOOO &#x1F495;<br />
                 <span style="font-size: 0.5em; display: block; margin-top: 1rem"
                     >Happy Valentine's Day, my love!</span
                 >
@@ -2306,44 +2333,44 @@
                 <div class="coupons-grid">
                     <div
                         class="coupon-card"
-                        onclick="downloadCoupon('coupon-hugs.png')"
+                        onclick="downloadCoupon('coffeedate.png')"
                     >
-                        <div class="coupon-title">Unlimited Hugs</div>
+                        <div class="coupon-title">Coffee Date</div>
                         <div class="coupon-subtitle">Click to download</div>
                     </div>
                     <div
                         class="coupon-card"
-                        onclick="downloadCoupon('coupon-kisses.png')"
+                        onclick="downloadCoupon('kisspass.png')"
                     >
-                        <div class="coupon-title">Unlimited Kisses</div>
+                        <div class="coupon-title">Kissing Coupon</div>
                         <div class="coupon-subtitle">Click to download</div>
                     </div>
                     <div
                         class="coupon-card"
-                        onclick="downloadCoupon('coupon-cuddles.png')"
+                        onclick="downloadCoupon('bearhug.png')"
                     >
-                        <div class="coupon-title">Unlimited Cuddles</div>
+                        <div class="coupon-title">Tight Bear Hug</div>
                         <div class="coupon-subtitle">Click to download</div>
                     </div>
                     <div
                         class="coupon-card"
-                        onclick="downloadCoupon('coupon-date-night.png')"
+                        onclick="downloadCoupon('freewish.png')"
                     >
-                        <div class="coupon-title">Date Night</div>
+                        <div class="coupon-title">Wildcard Coupon</div>
                         <div class="coupon-subtitle">Click to download</div>
                     </div>
                     <div
                         class="coupon-card"
-                        onclick="downloadCoupon('coupon-breakfast.png')"
+                        onclick="downloadCoupon('slowdance.png')"
                     >
-                        <div class="coupon-title">Breakfast in Bed</div>
+                        <div class="coupon-title">Slow Dance Tutorial</div>
                         <div class="coupon-subtitle">Click to download</div>
                     </div>
                     <div
                         class="coupon-card"
-                        onclick="downloadCoupon('coupon-movie.png')"
+                        onclick="downloadCoupon('movie.png')"
                     >
-                        <div class="coupon-title">Movie Marathon</div>
+                        <div class="coupon-title">Movie Marathon Night</div>
                         <div class="coupon-subtitle">Click to download</div>
                     </div>
                 </div>
@@ -3114,13 +3141,17 @@
             }
 
             // Toggle countdown minimize
-            document
-                .getElementById("toggleCountdown")
-                .addEventListener("click", () => {
-                    document
-                        .getElementById("countdownWidget")
-                        .classList.toggle("minimized");
-                });
+            window.addEventListener("load", () => {
+                const toggleCountdown =
+                    document.getElementById("toggleCountdown");
+                const countdownWidget =
+                    document.getElementById("countdownWidget");
+                if (toggleCountdown && countdownWidget) {
+                    toggleCountdown.addEventListener("click", () => {
+                        countdownWidget.classList.toggle("minimized");
+                    });
+                }
+            });
 
             // Minimize countdown on scroll (after celebration)
             let lastScrollTop = 0;
