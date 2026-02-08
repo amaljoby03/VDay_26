@@ -78,19 +78,20 @@
                 opacity: 0;
                 pointer-events: none;
             }
-
             .slideshow-background img {
+                position: absolute;
+                inset: 0;
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
                 transition: opacity 0.9s ease;
-                opacity: 1;
-                transform: scale(1);
-                animation: kenburns 12s ease-in-out infinite;
+                opacity: 0;
+                transform: none;
+                will-change: opacity;
             }
 
-            .slideshow-background img.fade-out {
-                opacity: 0;
+            .slideshow-background img.active {
+                opacity: 1;
             }
 
             @keyframes kenburns {
@@ -918,6 +919,34 @@
                 animation: fadeInUp 2s ease 2.5s forwards;
             }
 
+            .choice-tag {
+                position: absolute;
+                top: -2.1rem;
+                left: 50%;
+                transform: translateX(-50%);
+                border: 1px solid rgba(255, 255, 255, 0.58);
+                border-radius: 999px;
+                padding: 0.4rem 0.8rem;
+                font-family: "Lora", serif;
+                font-size: 0.86rem;
+                font-weight: 600;
+                letter-spacing: 0.02em;
+                color: #ffffff;
+                backdrop-filter: blur(4px);
+                pointer-events: none;
+                white-space: nowrap;
+            }
+
+            .yes-tag {
+                background: rgba(58, 123, 213, 0.72);
+            }
+
+            .no-tag {
+                background: rgba(37, 80, 122, 0.62);
+            }
+
+
+
             .answer-btn {
                 width: 120px;
                 height: 120px;
@@ -1514,6 +1543,13 @@
                     margin-top: 6rem;
                 }
 
+                .choice-tag {
+                    top: -1.9rem;
+                    padding: 0.35rem 0.7rem;
+                    font-size: 0.8rem;
+                }
+
+
                 .answer-btn {
                     width: 100px;
                     height: 100px;
@@ -2006,7 +2042,17 @@
 
         <!-- Background Slideshow -->
         <div class="slideshow-background" id="slideshowBackground">
-            <img src="" alt="Background slideshow" id="bgSlideshowImage" />
+                        <img
+                src=""
+                alt="Background slideshow"
+                id="bgSlideshowImageA"
+                class="active"
+            />
+            <img
+                src=""
+                alt="Background slideshow"
+                id="bgSlideshowImageB"
+            />
             <div class="video-overlay"></div>
         </div>
 
@@ -2080,7 +2126,7 @@
         </div>
 
         <!-- Audio Element -->
-        <audio id="bgMusic" loop>
+        <audio id="bgMusic" loop preload="auto" autoplay>
             <source src="" type="audio/mpeg" />
         </audio>
 
@@ -2953,12 +2999,14 @@
                 <p class="proposal-subtitle">
                     Again and again, forever and always baby... &#x2764;&#xFE0F;
                 </p>
+
                 <div class="answer-buttons" id="answerButtons">
                     <button
                         class="answer-btn yes-btn"
                         id="yesBtn"
                         onclick="sayYes()"
                     >
+                        <span class="choice-tag yes-tag">Yes</span>
                         <img
                             class="koala-icon"
                             src="koala_happy.png"
@@ -2966,6 +3014,7 @@
                         />
                     </button>
                     <button class="answer-btn no-btn" id="noBtn">
+                        <span class="choice-tag no-tag">No</span>
                         <img
                             class="koala-icon"
                             src="koala_sad.png"
@@ -3253,13 +3302,14 @@
                     CONFIG.playlist.length;
                 loadTrack(prevIndex);
             }
-
             // Background slideshow
             let shuffledSlides = [];
             let shuffledSlidePointer = 0;
             let currentSlidePath = "";
             let slideAdvanceTimerId = null;
-            let slideFadeTimerId = null;
+            let activeSlideImg = null;
+            let inactiveSlideImg = null;
+            let slideLoadToken = 0;
 
             function shuffleSlides(slides) {
                 const arr = [...slides];
@@ -3304,11 +3354,8 @@
                 let nextSlide = shuffledSlides[shuffledSlidePointer];
                 shuffledSlidePointer += 1;
 
-                // Never show the same slide twice in a row.
                 if (nextSlide === currentSlidePath) {
-                    if (
-                        shuffledSlidePointer >= shuffledSlides.length
-                    ) {
+                    if (shuffledSlidePointer >= shuffledSlides.length) {
                         refillSlideQueue(slides);
                     }
                     nextSlide = shuffledSlides[shuffledSlidePointer];
@@ -3339,59 +3386,84 @@
                 slideImg.style.objectPosition = getSlideObjectPosition(slidePath);
             }
 
+            function swapActiveSlideLayer() {
+                const prevActive = activeSlideImg;
+                activeSlideImg = inactiveSlideImg;
+                inactiveSlideImg = prevActive;
+            }
+
+            function showSlideOnInactiveLayer(slidePath, onReady) {
+                if (!inactiveSlideImg) return;
+                const token = ++slideLoadToken;
+
+                applySlideFraming(inactiveSlideImg, slidePath);
+                inactiveSlideImg.onload = () => {
+                    if (token !== slideLoadToken) return;
+                    onReady();
+                };
+                inactiveSlideImg.src = slidePath;
+
+                // Cached images may already be ready.
+                if (inactiveSlideImg.complete) {
+                    inactiveSlideImg.onload();
+                }
+            }
+
             function initializeSlideshow() {
                 const slides = CONFIG.backgroundSlides || [];
-                const slideImg = document.getElementById("bgSlideshowImage");
                 const slideshowBg = document.getElementById(
                     "slideshowBackground",
                 );
+                const slideA = document.getElementById("bgSlideshowImageA");
+                const slideB = document.getElementById("bgSlideshowImageB");
 
-                if (!slideImg || slides.length === 0) {
+                if (!slideA || !slideB || slides.length === 0) {
                     if (slideshowBg) {
                         slideshowBg.style.display = "none";
                     }
                     return;
                 }
 
-                // Prevent stacked timers if this is ever re-initialized.
                 if (slideAdvanceTimerId) {
                     clearTimeout(slideAdvanceTimerId);
                     slideAdvanceTimerId = null;
                 }
-                if (slideFadeTimerId) {
-                    clearTimeout(slideFadeTimerId);
-                    slideFadeTimerId = null;
-                }
+
+                activeSlideImg = slideA;
+                inactiveSlideImg = slideB;
+                activeSlideImg.classList.add("active");
+                inactiveSlideImg.classList.remove("active");
 
                 preloadSlides(slides);
                 refillSlideQueue(slides);
+
                 const firstSlide = getNextSlide(slides);
                 currentSlidePath = firstSlide;
-                slideImg.src = firstSlide;
-                applySlideFraming(slideImg, firstSlide);
+                applySlideFraming(activeSlideImg, firstSlide);
+                activeSlideImg.src = firstSlide;
 
                 if (slides.length === 1) return;
 
                 const holdDurationMs = CONFIG.slideDurationMs || 5000;
-                const fadeDurationMs = CONFIG.slideFadeDurationMs || 900;
 
                 function scheduleNextTransition() {
                     slideAdvanceTimerId = setTimeout(() => {
-                        slideImg.classList.add("fade-out");
+                        const nextSlide = getNextSlide(slides);
 
-                        slideFadeTimerId = setTimeout(() => {
-                            const nextSlide = getNextSlide(slides);
+                        showSlideOnInactiveLayer(nextSlide, () => {
+                            inactiveSlideImg.classList.add("active");
+                            activeSlideImg.classList.remove("active");
+
                             currentSlidePath = nextSlide;
-                            slideImg.src = nextSlide;
-                            applySlideFraming(slideImg, nextSlide);
-                            slideImg.classList.remove("fade-out");
+                            swapActiveSlideLayer();
                             scheduleNextTransition();
-                        }, fadeDurationMs);
+                        });
                     }, holdDurationMs);
                 }
 
                 scheduleNextTransition();
             }
+
             // Initialize media
             function initializeMedia() {
                 const albumArtImg = document.getElementById("albumArt");
@@ -3544,9 +3616,58 @@
             const nextBtn = document.getElementById("nextBtn");
 
             // Initialize on load
-            window.addEventListener("load", () => {
+            let musicStarted = false;
+            let autoplayBound = false;
+
+            function setMusicUiState(isPlaying) {
+                if (isPlaying) {
+                    playIcon.style.display = "none";
+                    pauseIcon.style.display = "block";
+                    musicPlayer.classList.add("playing");
+                } else {
+                    playIcon.style.display = "block";
+                    pauseIcon.style.display = "none";
+                    musicPlayer.classList.remove("playing");
+                }
+            }
+
+            async function tryAutoStartMusic() {
+                if (musicStarted) return true;
+                try {
+                    await audio.play();
+                    musicStarted = true;
+                    setMusicUiState(true);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+
+            function bindFirstInteractionAutoplay() {
+                if (autoplayBound) return;
+                autoplayBound = true;
+
+                const startOnFirstGesture = async () => {
+                    const started = await tryAutoStartMusic();
+                    if (started) {
+                        window.removeEventListener("pointerdown", startOnFirstGesture);
+                        window.removeEventListener("touchstart", startOnFirstGesture);
+                        window.removeEventListener("keydown", startOnFirstGesture);
+                    }
+                };
+
+                window.addEventListener("pointerdown", startOnFirstGesture, { passive: true });
+                window.addEventListener("touchstart", startOnFirstGesture, { passive: true });
+                window.addEventListener("keydown", startOnFirstGesture);
+            }
+
+            window.addEventListener("load", async () => {
                 initializeMedia();
                 audio.volume = 0.7;
+                const started = await tryAutoStartMusic();
+                if (!started) {
+                    bindFirstInteractionAutoplay();
+                }
             });
 
             // Auto-advance to next song when current song ends
@@ -3564,31 +3685,25 @@
                 prevTrack();
             });
 
-            // Auto-play music when user starts journey
-            let musicStarted = false;
+            // Start journey + ensure music starts if it was blocked before
             function startJourneyWithMusic() {
-                if (!musicStarted) {
-                    audio
-                        .play()
-                        .catch((e) => console.log("Auto-play prevented:", e));
-                    musicStarted = true;
-                    musicPlayer.classList.add("playing");
-                }
+                tryAutoStartMusic();
                 startJourney();
             }
 
             // Play/Pause functionality
-            playPauseBtn.addEventListener("click", () => {
+            playPauseBtn.addEventListener("click", async () => {
                 if (audio.paused) {
-                    audio.play();
-                    playIcon.style.display = "none";
-                    pauseIcon.style.display = "block";
-                    musicPlayer.classList.add("playing");
+                    try {
+                        await audio.play();
+                        musicStarted = true;
+                        setMusicUiState(true);
+                    } catch (e) {
+                        console.log("Play blocked:", e);
+                    }
                 } else {
                     audio.pause();
-                    playIcon.style.display = "block";
-                    pauseIcon.style.display = "none";
-                    musicPlayer.classList.remove("playing");
+                    setMusicUiState(false);
                 }
             });
 
@@ -4157,6 +4272,9 @@
         </button>
     </body>
 </html>
+
+
+
 
 
 
