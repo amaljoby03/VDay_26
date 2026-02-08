@@ -83,7 +83,7 @@
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                transition: opacity 2.4s ease;
+                transition: opacity 0.9s ease;
                 opacity: 1;
                 transform: scale(1);
                 animation: kenburns 12s ease-in-out infinite;
@@ -3134,7 +3134,8 @@
                     "slide19.jpg": "59% 58%",
                     "slide37.jpg": "50% 62%"
                 },
-                slideDurationMs: 3000, // 3 seconds per slide
+                slideDurationMs: 5000, // Hold each slide for 5 seconds before fade
+                slideFadeDurationMs: 900, // Crossfade duration in ms
 
                 // Video configuration (currently unused)
                 backgroundVideo: "background-video.mp4", // Background video file path
@@ -3279,6 +3280,16 @@
                 shuffledSlidePointer = 0;
             }
 
+            function preloadSlides(slides) {
+                if (!slides || slides.length === 0) return;
+                slides.forEach((src) => {
+                    const img = new Image();
+                    img.decoding = "async";
+                    img.loading = "eager";
+                    img.src = src;
+                });
+            }
+
             function getNextSlide(slides) {
                 if (!slides || slides.length === 0) return "";
                 if (slides.length === 1) return slides[0];
@@ -3352,6 +3363,7 @@
                     slideFadeTimerId = null;
                 }
 
+                preloadSlides(slides);
                 refillSlideQueue(slides);
                 const firstSlide = getNextSlide(slides);
                 currentSlidePath = firstSlide;
@@ -3360,8 +3372,8 @@
 
                 if (slides.length === 1) return;
 
-                const duration = CONFIG.slideDurationMs || 3000;
-                const fadeDurationMs = 1200;
+                const holdDurationMs = CONFIG.slideDurationMs || 5000;
+                const fadeDurationMs = CONFIG.slideFadeDurationMs || 900;
 
                 function scheduleNextTransition() {
                     slideAdvanceTimerId = setTimeout(() => {
@@ -3375,7 +3387,7 @@
                             slideImg.classList.remove("fade-out");
                             scheduleNextTransition();
                         }, fadeDurationMs);
-                    }, duration);
+                    }, holdDurationMs);
                 }
 
                 scheduleNextTransition();
@@ -4145,6 +4157,8 @@
         </button>
     </body>
 </html>
+
+
 
 
 
